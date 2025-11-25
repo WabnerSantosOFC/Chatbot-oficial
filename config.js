@@ -1,6 +1,6 @@
 window.CONFIG = {
   // ─── SUAS CREDENCIAIS REAIS ──────────────
-  LINK_ACESSO: "https://www.google.com/",
+  LINK_ACESSO: "https://wabnersantosofc.github.io/pagina-venda-chatbot/",
   AUDIO_URL: "audio/explicacao-wabner.mp3",
   MEU_TOKEN_TELEGRAM: "8299290777:AAHhqMVE-ZZVxVexMnVPty5XAS5DzRW84xo",
   MEU_CHAT_ID: "7468174088",
@@ -60,4 +60,5 @@ window.CONFIG = {
       ]
     }
   ]
+
 };
