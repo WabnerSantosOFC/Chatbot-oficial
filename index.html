@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Conversa com Wabner Santos</title>
+  <style>
+    :root {
+      --verde-whats: #075e54;
+      --verde-claro: #dcf8c6;
+      --cinza-msg: #e5e5ea;
+      --fundo: #e5ddd5;
+      --texto: #000;
+      --branco: #fff;
+      --sombra: rgba(0, 0, 0, 0.15);
+      --cinza-visto: #999;
+      --azul-visto: #34b7f1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --verde-whats: #128C7E;
+        --verde-claro: #25d366;
+        --cinza-msg: #2A2F32;
+        --fundo: #121212;
+        --texto: #eee;
+        --branco: #1e1e1e;
+        --sombra: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--fundo);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      margin: 0;
+      overflow: auto;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 420px;
+      height: 90vh;
+      max-height: 720px;
+      background: var(--branco);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px var(--sombra);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: var(--verde-whats);
+      color: #fff;
+      padding: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .chat-header img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .chat-header-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .chat-header-info > span:first-child {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .chat-header-info small {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+      min-height: 0;
+    }
+
+    .message,
+    .btn-acesso,
+    .depoimento-container {
+      transition: all 0.3s ease;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      line-height: 1.4;
+      font-size: 15px;
+      word-wrap: break-word;
+      color: var(--texto);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .received {
+      align-self: flex-start;
+      background: linear-gradient(135deg, #f0f0f0, #e5e5ea);
+      border-bottom-left-radius: 6px;
+    }
+
+    .sent {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #dcf8c6, #b9f6ca);
+      border-bottom-right-radius: 6px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .sent {
+        background: linear-gradient(135deg, #25d366, #128C7E);
+        color: #fff;
+      }
+      .received {
+        background: linear-gradient(135deg, #2A2F32, #3a3f42);
+        color: #eee;
+      }
+    }
+
+    .message small {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 4px;
+      color: #555;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .visto {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .check {
+      width: 14px;
+      height: 14px;
+      fill: var(--cinza-visto);
+    }
+
+    .check.lido {
+      fill: var(--azul-visto);
+    }
+
+    .typing {
+      align-self: flex-start;
+      background: var(--cinza-msg);
+      border-radius: 18px;
+      padding: 8px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 32px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: #888;
+      border-radius: 50%;
+      animation: blink 1.4s infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.2; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    .btn-acesso {
+      display: inline-block;
+      background: var(--verde-whats);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 10px;
+      transition: transform 0.3s, background 0.3s;
+      animation: pulse 2s infinite;
+      cursor: pointer;
+    }
+
+    .btn-acesso:hover {
+      background: #0b776b;
+      transform: scale(1.05);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .depoimento-container {
+      align-self: flex-start;
+      max-width: 75%;
+      border-radius: 18px;
+      border-bottom-left-radius: 6px;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .depoimento-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .depoimento-legenda {
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.3;
+      color: var(--texto);
+    }
+
+    .input-area {
+      display: flex;
+      padding: 10px;
+      background: #f5f5f5;
+      border-top: 1px solid #ddd;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .input-area input {
+      flex: 1;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 24px;
+      outline: none;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    .input-area button {
+      background: var(--verde-whats);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .messages::-webkit-scrollbar {
+      width: 8px;
+    }
+    .messages::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 🔑 Carrega config.js OPCIONAL -->
+  <script src="config.js"></script>
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <img src="imagens/perfil.jpg" alt="Wabner Santos">
+      <div class="chat-header-info">
+        <span>Wabner Santos</span>
+        <small id="header-status">online</small>
+      </div>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off"/>
+      <button id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script>
+  // === CONFIGURAÇÃO PADRÃO (seu conteúdo original) ===
+  const CONFIG_PADRAO = {
+    botName: "Wabner Santos",
+    botPhoto: "imagens/perfil.jpg",
+    LINK_ACESSO: "https://pay.hotmart.com/SEU-LINK-AQUI",
+    AUDIO_URL: "audio/explicacao-wabner.mp3",
+    MEU_TOKEN_TELEGRAM: "8299290777:AAHhqMVE-ZZVxVexMnVPty5XAS5DzRW84xo",
+    MEU_CHAT_ID: "7468174088",
+
+    // Mensagens originais (exatamente como estão no seu código)
+    welcomeMessage: "{saudacao}! 👋 Aqui é o Wabner Santos.<br><br>Antes de tudo: <b>qual é o seu nome?</b> Preciso saber pra te atender direito! 😊",
+    askNameAgain: "Por favor, me diga seu nome completo ou como prefere ser chamado(a). 😊",
+    afterNameMessage: `Prazer, {nomeLead}! 😊<br><br>Eu criei um <b>chatbot em HTML</b> que você pode hospedar no GitHub Pages — de graça!<br><br>Funciona com qualquer plataforma (Hotmart, Monetizze, Eduzz...) e vende pra você 24h por dia.<br><br>Quer ver como funciona?`,
+
+    responses: [
+      {
+        cond: /sim|claro|quero|pode|mostra/,
+        seq: [
+          `Perfeito, {nomeLead}! 😎`,
+          "Imagina isso:",
+          "• Um cliente te escreve às 2h da manhã…<br>• Seu chatbot responde, envia seu link…<br>• E fecha a venda sozinho.",
+          `Dá só uma olhada nesse áudio rápido que gravei explicando: <br><audio controls preload="metadata"><source src="{audioUrl}" type="audio/mpeg">Ouvir áudio</audio>`,
+          "Você vai receber <b>todos os arquivos prontos</b> — é só editar seu nome, link, foto e áudio, e hospedar no GitHub Pages (de graça!).",
+          "Veja resultados reais:",
+          `<div class="depoimento-container">
+            <img src="imagens/cliente1.png" alt="Cliente">
+            <div class="depoimento-legenda">“Em 3 dias, vendi R$ 1.200 com o chatbot — sem postar nada!”<br><small>Ana – Afiliada</small></div>
+          </div>`,
+          `<div class="depoimento-container">
+            <img src="imagens/cliente2.png" alt="Cliente">
+            <div class="depoimento-legenda">“Nunca imaginei vender enquanto dormia. O chatbot fez isso por mim!”<br><small>Lucas – Produtor</small></div>
+          </div>`,
+          "Ah, e pode ficar tranquilo! Você vai receber <b>tutoriais em PDF super bem explicados</b>, mostrando <b>passo a passo</b> como alterar tudo e <b>publicar seu projeto no GitHub</b> — em menos de <b>10 minutos</b>, mesmo que você nunca tenha feito isso antes!",
+          "Como bônus, leva meu <b>Guia: 5 Frases que Vendem no WhatsApp</b>.",
+          `{button:📥 Receber Meus Arquivos + Tutorial}`
+        ]
+      },
+      {
+        cond: /não|nao|duvida|talvez/,
+        seq: [
+          `{nomeLead}, entendo… muitos acham que é complicado no começo.`,
+          "Mas calma: você recebe <b>o HTML pronto</b> — só trocar seu link, foto e áudio.",
+          "Hospeda no GitHub Pages (de graça!) e pronto: seu vendedor automático tá no ar.",
+          "Tem garantia de 7 dias. Se não conseguir configurar, devolvo seu dinheiro.",
+          `{button:🚀 Receber Meus Arquivos Agora}`
+        ]
+      }
+    ]
+  };
+
+  // === CARREGA CONFIG.JS (se existir) ===
+  const CONFIG_USADA = window.CONFIG || CONFIG_PADRAO;
+
+  // === VARIÁVEIS PRINCIPAIS ===
+  const LINK_ACESSO = (CONFIG_USADA.LINK_ACESSO || CONFIG_PADRAO.LINK_ACESSO).trim();
+  const AUDIO_URL = CONFIG_USADA.AUDIO_URL || CONFIG_PADRAO.AUDIO_URL;
+  const MEU_TOKEN_TELEGRAM = CONFIG_USADA.MEU_TOKEN_TELEGRAM || CONFIG_PADRAO.MEU_TOKEN_TELEGRAM;
+  const MEU_CHAT_ID = CONFIG_USADA.MEU_CHAT_ID || CONFIG_PADRAO.MEU_CHAT_ID;
+
+  // === RESTANTE DO SEU CÓDIGO (sem mudar NADA) ===
+  function saudacao() {
+    const h = new Date().getHours();
+    if (h < 12) return "Bom dia";
+    if (h < 18) return "Boa tarde";
+    return "Boa noite";
+  }
+
+  let nomeLead = "";
+  const messagesDiv = document.getElementById("messages");
+  const input = document.getElementById("user-input");
+  const btn = document.getElementById("sendBtn");
+  const headerStatus = document.getElementById("header-status");
+
+  function atualizarStatus(status) {
+    headerStatus.textContent = status;
+  }
+  atualizarStatus("online");
+  let inatividadeTimer = null;
+  function resetarInatividade() {
+    if (inatividadeTimer) clearTimeout(inatividadeTimer);
+    atualizarStatus("online");
+    inatividadeTimer = setTimeout(() => {
+      const mins = Math.floor(Math.random() * 5) + 1;
+      atualizarStatus(`visto por último há ${mins} min`);
+    }, 60000);
+  }
+  input.addEventListener("input", resetarInatividade);
+  btn.addEventListener("click", resetarInatividade);
+
+  function horaAtual() {
+    return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function criarVisto() {
+    const visto = document.createElement("span");
+    visto.classList.add("visto");
+    visto.innerHTML = `
+      <svg class="check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1.5 13l5 5L20 4"/></svg>
+      <svg class="check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1.5 13l5 5L20 4"/></svg>
+    `;
+    setTimeout(() => {
+      visto.querySelectorAll(".check").forEach(c => c.classList.add("lido"));
+    }, 2500);
+    return visto;
+  }
+
+  function addMessage(content, sent = false, html = false) {
+    const msg = document.createElement("div");
+    msg.className = `message ${sent ? "sent" : "received"}`;
+    const info = document.createElement("small");
+    info.textContent = horaAtual();
+    if (sent) info.appendChild(criarVisto());
+    messagesDiv.appendChild(msg);
+    scrollToBottom();
+
+    if (html) {
+      msg.innerHTML = content + info.outerHTML;
+    } else {
+      msg.textContent = "";
+      let i = 0;
+      const type = () => {
+        if (i < content.length) {
+          msg.textContent += content.charAt(i);
+          i++;
+          setTimeout(type, 20 + Math.random() * 30);
+        } else {
+          msg.appendChild(info);
+        }
+      };
+      type();
+    }
+  }
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 100);
+  }
+
+  const typing = {
+    show() {
+      atualizarStatus("digitando...");
+      if (document.getElementById("typing")) return;
+      const el = document.createElement("div");
+      el.className = "typing";
+      el.id = "typing";
+      el.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      messagesDiv.appendChild(el);
+      scrollToBottom();
+    },
+    hide() {
+      atualizarStatus("online");
+      const el = document.getElementById("typing");
+      if (el) el.remove();
+    }
+  };
+
+  async function notificarLeadNoTelegram(nome) {
+    try {
+      const msg = `🚨 SUSPEITA DE VENDA!\n\n${nome} se identificou no seu ChatBot Vendedor.\n\n👉 Hora de fechar!`;
+      const url = `https://api.telegram.org/bot${MEU_TOKEN_TELEGRAM}/sendMessage?chat_id=${MEU_CHAT_ID}&text=${encodeURIComponent(msg)}`;
+      await fetch(url);
+    } catch (e) {}
+  }
+
+  async function notificarCliqueCompra(nome) {
+    try {
+      const nomeExibido = nome || "Alguém";
+      const msg = `✅ CLIQUE DE COMPRA!\n\n${nomeExibido} clicou no link do seu ChatBot Vendedor.\n\n🔥 Alta chance de conversão!`;
+      const url = `https://api.telegram.org/bot${MEU_TOKEN_TELEGRAM}/sendMessage?chat_id=${MEU_CHAT_ID}&text=${encodeURIComponent(msg)}`;
+      await fetch(url);
+    } catch (e) {}
+  }
+
+  function renderMessage(template) {
+    return template
+      .replace(/{saudacao}/g, saudacao())
+      .replace(/{nomeLead}/g, nomeLead)
+      .replace(/{audioUrl}/g, AUDIO_URL)
+      .replace(/{button:([^}]+)}/g, (match, text) =>
+        `<a href="${LINK_ACESSO}" target="_blank" rel="noopener noreferrer" class="btn-acesso" onclick="notificarCliqueCompra('${nomeLead}')">${text}</a>`
+      );
+  }
+
+  function enviarMensagensSequenciais(mensagens, index = 0) {
+    if (index >= mensagens.length) return;
+    typing.show();
+    setTimeout(() => {
+      typing.hide();
+      const msgRenderizada = renderMessage(mensagens[index]);
+      addMessage(msgRenderizada, false, true);
+      enviarMensagensSequenciais(mensagens, index + 1);
+    }, 1200);
+  }
+
+  function botReply(userMsg) {
+    resetarInatividade();
+    const msg = userMsg.trim();
+
+    if (!nomeLead) {
+      if (msg.length < 2) {
+        addMessage(renderMessage(CONFIG_USADA.askNameAgain || CONFIG_PADRAO.askNameAgain), false, true);
+        return;
+      }
+      nomeLead = msg;
+      notificarLeadNoTelegram(nomeLead);
+      setTimeout(() => {
+        addMessage(renderMessage(CONFIG_USADA.afterNameMessage || CONFIG_PADRAO.afterNameMessage), false, true);
+      }, 800);
+      return;
+    }
+
+    const msgLower = msg.toLowerCase();
+    const respostas = CONFIG_USADA.responses || CONFIG_PADRAO.responses;
+    const bloco = respostas.find(r => r.cond.test(msgLower));
+    const mensagens = bloco ? bloco.seq : [`${nomeLead}, posso te mostrar na prática como isso funciona? É bem rápido. 😉`];
+    enviarMensagensSequenciais(mensagens);
+  }
+
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(text, true);
+    input.value = "";
+    typing.show();
+    setTimeout(() => {
+      typing.hide();
+      botReply(text);
+    }, 900);
+  }
+
+  btn.addEventListener("click", sendMessage);
+  input.addEventListener("keypress", e => e.key === "Enter" && sendMessage());
+
+  setTimeout(() => {
+    addMessage(renderMessage(CONFIG_USADA.welcomeMessage || CONFIG_PADRAO.welcomeMessage), false, true);
+  }, 700);
+
+  window.notificarCliqueCompra = notificarCliqueCompra;
+</script>
+</body>
+</html>
